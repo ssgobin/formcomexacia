@@ -754,6 +754,18 @@
   </div>
 
   <script>
+    console.log('🚀 Painel Admin ACIA iniciando...');
+
+    // Credenciais de Admin (declarar PRIMEIRO, globalmente)
+    const ADMIN_CREDENTIALS = {
+      email: 'admin@acia.com.br',
+      password: 'Acia@2026'
+    };
+
+    let allData = [];
+    let charts = {};
+    let db = null;
+
     // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBnri8AGavFUCUvi17eyVPTYmeXPgyct48",
@@ -765,22 +777,36 @@
       measurementId: "G-M2Z82JNLC9"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    // Inicializar Firebase com verificação segura
+    function initializeFirebase() {
+      try {
+        if (typeof firebase === 'undefined') {
+          console.warn('⏳ Firebase SDK aguardando carregamento...');
+          setTimeout(initializeFirebase, 1000);
+          return;
+        }
 
-    let allData = [];
-    let charts = {};
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+          db = firebase.firestore();
+          console.log('✅ Firebase inicializado com sucesso');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao inicializar Firebase:', error);
+        setTimeout(initializeFirebase, 2000); // Tentar novamente
+      }
+    }
 
-    // Credenciais de Admin
-    const ADMIN_CREDENTIALS = {
-      email: 'admin@acia.com.br',
-      password: 'Acia@2026'
-    };
-
-    // Verificar autenticação ao carregar
-    document.addEventListener('DOMContentLoaded', () => {
-      checkAuthOnLoad();
-    });
+    // Inicializar assim que o DOM ficar pronto
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeFirebase();
+        setTimeout(checkAuthOnLoad, 500); // Pequeno delay para Firebase estar pronto
+      });
+    } else {
+      initializeFirebase();
+      setTimeout(checkAuthOnLoad, 500); // Pequeno delay para Firebase estar pronto
+    }
 
     // Verificar se usuário está autenticado
     function checkAuthOnLoad() {
@@ -903,6 +929,13 @@
 
     async function loadData() {
       try {
+        // Garantir que Firebase está inicializado
+        if (!db) {
+          console.error('Firebase não está inicializado ainda');
+          setTimeout(loadData, 1000); // Tentar novamente após 1 segundo
+          return;
+        }
+
         const snapshot = await db.collection('diagnosticos').get();
         allData = snapshot.docs.map(doc => ({
           id: doc.id,
