@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - ACIA Comex Diagnósticos</title>
+  <link rel="icon" href="../img/Principal.svg" type="image/svg+xml">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
@@ -45,6 +49,11 @@
       font-size: 28px;
       font-weight: 700;
       margin: 0;
+    }
+
+    .header h1 i,
+    .login-container h1 i {
+      margin-right: 8px;
     }
 
     .header p {
@@ -574,7 +583,7 @@
   <!-- Login Screen -->
   <div id="login-screen" class="active">
     <div class="login-container">
-      <h1>🔐 Painel Admin</h1>
+      <h1><i class="fa-solid fa-lock"></i>Painel Admin</h1>
       <p>Acesso restrito - ACIA</p>
       
       <div class="login-error" id="loginError"></div>
@@ -605,7 +614,7 @@
   <div class="header">
     <div class="header-content">
       <div>
-        <h1>📊 Painel Admin</h1>
+        <h1><i class="fa-solid fa-chart-column"></i>Painel Admin</h1>
         <p>Diagnósticos ACIA - Núcleo de Comércio Exterior</p>
       </div>
       <button class="logout-btn" onclick="handleLogout()">Proteger com senha</button>
@@ -790,7 +799,7 @@
         if (!firebase.apps.length) {
           firebase.initializeApp(firebaseConfig);
           db = firebase.firestore();
-          console.log('✅ Firebase inicializado com sucesso');
+          console.log('[OK] Firebase inicializado com sucesso');
         }
       } catch (error) {
         console.error('❌ Erro ao inicializar Firebase:', error);
@@ -902,7 +911,7 @@
       // Mostrar email do usuário (opcional)
       const email = sessionStorage.getItem('adminEmail');
       if (email) {
-        console.log(`✅ Logado como: ${email}`);
+        console.log(`[OK] Logado como: ${email}`);
       }
     }
 
@@ -1030,7 +1039,7 @@
           <td>${data.cidade || '-'}</td>
           <td>${data.setor || '-'}</td>
           <td>${data.experiencia_exportacao || '-'}</td>
-          <td>${data.importa === 'Sim' ? '✓' : '✗'}</td>
+          <td>${data.importa === 'Sim' ? '<i class="fa-solid fa-check" aria-label="sim"></i>' : '<i class="fa-solid fa-xmark" aria-label="nao"></i>'}</td>
           <td>${data.interesse_exportar || '-'}</td>
         `;
       });
@@ -1068,7 +1077,7 @@
           <td>${data.cidade || '-'}</td>
           <td>${data.setor || '-'}</td>
           <td>${data.experiencia_exportacao || '-'}</td>
-          <td>${data.importa === 'Sim' ? '✓' : '✗'}</td>
+          <td>${data.importa === 'Sim' ? '<i class="fa-solid fa-check" aria-label="sim"></i>' : '<i class="fa-solid fa-xmark" aria-label="nao"></i>'}</td>
           <td>${data.interesse_exportar || '-'}</td>
         `;
       });

@@ -5,10 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Diagnóstico – Núcleo de Comex ACIA</title>
+    <link rel="icon" href="img/Principal.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         *,
         *::before,
@@ -275,6 +279,10 @@
             font-size: 1.4rem;
             flex-shrink: 0;
             box-shadow: 0 4px 12px rgba(26, 127, 193, 0.25);
+        }
+
+        .section-icon i {
+            font-size: 1.3rem;
         }
 
         .section-title {
@@ -738,6 +746,10 @@
             box-shadow: 0 8px 28px rgba(26, 127, 193, 0.3);
         }
 
+        .success-icon i {
+            font-size: 2.4rem;
+        }
+
         #success-screen h2 {
             font-size: 1.4rem;
             font-weight: 800;
@@ -761,6 +773,10 @@
             .success-icon {
                 width: 75px;
                 height: 75px;
+                font-size: 2rem;
+            }
+
+            .success-icon i {
                 font-size: 2rem;
             }
 
@@ -950,7 +966,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section active" id="section-0">
                 <div class="section-header">
-                    <div class="section-icon">🏢</div>
+                    <div class="section-icon"><i class="fa-solid fa-building"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 1 de 7</div>
                         <h2>Perfil da Empresa</h2>
@@ -1040,7 +1056,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section" id="section-1">
                 <div class="section-header">
-                    <div class="section-icon">🌍</div>
+                    <div class="section-icon"><i class="fa-solid fa-earth-americas"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 2 de 7</div>
                         <h2>Experiência com Exportação</h2>
@@ -1130,7 +1146,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section" id="section-2">
                 <div class="section-header">
-                    <div class="section-icon">📦</div>
+                    <div class="section-icon"><i class="fa-solid fa-box-open"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 3 de 7</div>
                         <h2>Produtos e Classificação</h2>
@@ -1200,7 +1216,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section" id="section-3">
                 <div class="section-header">
-                    <div class="section-icon">🏗️</div>
+                    <div class="section-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 4 de 7</div>
                         <h2>Estrutura e Preparação para Exportação</h2>
@@ -1294,7 +1310,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section" id="section-4">
                 <div class="section-header">
-                    <div class="section-icon">🚢</div>
+                    <div class="section-icon"><i class="fa-solid fa-ship"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 5 de 7</div>
                         <h2>Importação</h2>
@@ -1392,7 +1408,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section" id="section-5">
                 <div class="section-header">
-                    <div class="section-icon">🎯</div>
+                    <div class="section-icon"><i class="fa-solid fa-bullseye"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 6 de 7</div>
                         <h2>Interesses e Desafios</h2>
@@ -1499,7 +1515,7 @@
   ═══════════════════════════════════════════════════════════ -->
             <div class="form-section" id="section-6">
                 <div class="section-header">
-                    <div class="section-icon">📋</div>
+                    <div class="section-icon"><i class="fa-solid fa-clipboard-list"></i></div>
                     <div class="section-title">
                         <div class="badge">Seção 7 de 7</div>
                         <h2>Sobre o PEIEX</h2>
@@ -1539,7 +1555,7 @@
                 <div class="card"
                     style="background: linear-gradient(135deg, var(--blue-pale) 0%, var(--white) 100%); border-color: var(--blue-light);">
                     <div style="display:flex; align-items:center; gap:14px;">
-                        <div style="font-size:2rem;">✅</div>
+                        <div style="font-size:2rem;"><i class="fa-solid fa-circle-check"></i></div>
                         <div>
                             <p style="font-weight:700; color:var(--blue); font-size:0.9rem;">Tudo pronto!</p>
                             <p style="font-size:0.78rem; color:var(--gray-sub); margin-top:4px; line-height:1.6;">Revise
@@ -1554,7 +1570,7 @@
 
         <!-- SUCCESS -->
         <div id="success-screen">
-            <div class="success-icon">🌐</div>
+            <div class="success-icon"><i class="fa-solid fa-earth-americas"></i></div>
             <h2>Diagnóstico Enviado!</h2>
             <p>Obrigado pela participação. O Núcleo de Comércio Exterior da ACIA entrará em contato em breve com
                 informações personalizadas para a sua empresa.</p>
@@ -1563,11 +1579,11 @@
         <!-- NAVIGATION -->
         <div class="nav-buttons" id="nav-buttons">
             <button type="button" class="btn btn-secondary" id="btn-prev" onclick="prevStep()" disabled>
-                ← Anterior
+                <i class="fa-solid fa-arrow-left"></i> Anterior
             </button>
             <span class="step-counter" id="step-counter">Etapa 1 de 7</span>
             <button type="button" class="btn btn-primary" id="btn-next" onclick="nextStep()">
-                Próximo →
+                Próximo <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
     </main>
@@ -1683,7 +1699,9 @@
                 else if (i < currentStep) btn.classList.add('done');
             });
 
-            document.querySelectorAll('.step-btn.done .step-circle').forEach(c => { c.textContent = '✓'; });
+            document.querySelectorAll('.step-btn.done .step-circle').forEach(c => {
+                c.innerHTML = '<i class="fa-solid fa-check"></i>';
+            });
             document.querySelectorAll('.step-btn:not(.done) .step-circle').forEach(c => {
                 c.textContent = parseInt(c.closest('.step-btn').dataset.step) + 1;
             });
@@ -1693,7 +1711,9 @@
             document.getElementById('btn-prev').disabled = currentStep === 0;
 
             const btn = document.getElementById('btn-next');
-            btn.textContent = currentStep === totalSteps - 1 ? '✔ Enviar Diagnóstico' : 'Próximo →';
+            btn.innerHTML = currentStep === totalSteps - 1
+                ? '<i class="fa-solid fa-paper-plane"></i> Enviar Diagnóstico'
+                : 'Próximo <i class="fa-solid fa-arrow-right"></i>';
             document.getElementById('step-counter').textContent = `Etapa ${currentStep + 1} de ${totalSteps}`;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1757,7 +1777,7 @@
                 .catch(err => {
                     console.error('Erro ao salvar:', err);
                     btn.disabled = false;
-                    btn.textContent = '✔ Enviar Diagnóstico';
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Diagnóstico';
                     showErrors(['Erro ao enviar. Verifique sua conexão e tente novamente.']);
                 });
         }
