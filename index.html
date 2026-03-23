@@ -1084,14 +1084,15 @@
                         </div>
                     </div>
 
-                    <div class="card-divider"></div>
+                    <div id="export-followup-wrap">
+                        <div class="card-divider"></div>
 
-                    <div class="field-group" id="desde-quando-wrap">
+                        <div class="field-group export-followup" id="desde-quando-wrap">
                         <label class="field-label" for="desde-quando">Se exporta ou já exportou, desde quando?</label>
                         <input type="text" id="desde-quando" name="desde_quando" placeholder="Ex.: 2018" />
-                    </div>
+                        </div>
 
-                    <div class="field-group">
+                        <div class="field-group export-followup">
                         <label class="field-label">Percentual do faturamento vindo de exportações:</label>
                         <div class="options-grid" style="margin-top:8px;">
                             <div class="option-chip">
@@ -1115,17 +1116,17 @@
                                 <label for="fat-50">Acima de 50%</label>
                             </div>
                         </div>
-                    </div>
+                        </div>
 
-                    <div class="card-divider"></div>
+                        <div class="card-divider export-followup"></div>
 
-                    <div class="field-group">
+                        <div class="field-group export-followup">
                         <label class="field-label" for="paises-exportacao">Países para os quais já exportou:</label>
                         <input type="text" id="paises-exportacao" name="paises_exportacao"
                             placeholder="Ex.: Argentina, EUA, Alemanha..." />
-                    </div>
+                        </div>
 
-                    <div class="field-group">
+                        <div class="field-group export-followup">
                         <label class="field-label">Forma de exportação:</label>
                         <div class="options-grid" style="margin-top:8px;">
                             <div class="option-chip">
@@ -1136,6 +1137,7 @@
                                 <input type="radio" id="forma-indireta" name="forma_exportacao" value="indireta" />
                                 <label for="forma-indireta">Indireta (trading / comercial exportadora)</label>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1636,8 +1638,11 @@
                     break;
                 case 1:
                     r('experiencia_exportacao', 'Experiência com Exportação');
-                    r('perc_faturamento', 'Percentual do faturamento');
-                    r('forma_exportacao', 'Forma de exportação');
+                    const experienciaExportacao = document.querySelector('input[name="experiencia_exportacao"]:checked')?.value;
+                    if (experienciaExportacao && experienciaExportacao !== 'nunca') {
+                        r('perc_faturamento', 'Percentual do faturamento');
+                        r('forma_exportacao', 'Forma de exportação');
+                    }
                     break;
                 case 2:
                     r('certificacoes', 'Certificações internacionais');
@@ -1789,6 +1794,52 @@
             if (!checkbox.checked) document.getElementById('dif-outros-text').value = '';
         }
 
+        // ─── Exportação: mostrar/ocultar perguntas condicionais ──────
+        function clearRadioGroup(name) {
+            document.querySelectorAll(`[name="${name}"]`).forEach(input => {
+                input.checked = false;
+            });
+        }
+
+        function toggleExportacaoFields() {
+            const experiencia = document.querySelector('input[name="experiencia_exportacao"]:checked')?.value;
+            const nuncaExportou = experiencia === 'nunca';
+            const followupWrap = document.getElementById('export-followup-wrap');
+
+            if (followupWrap) {
+                followupWrap.style.display = nuncaExportou ? 'none' : '';
+            }
+
+            document.querySelectorAll('.export-followup').forEach(el => {
+                el.style.display = nuncaExportou ? 'none' : '';
+            });
+
+            if (nuncaExportou) {
+                document.getElementById('desde-quando').value = '';
+                document.getElementById('paises-exportacao').value = '';
+                clearRadioGroup('perc_faturamento');
+                clearRadioGroup('forma_exportacao');
+            }
+        }
+
+        // ─── Importação: mostrar/ocultar perguntas condicionais ──────
+        function toggleImportacaoFields() {
+            const importa = document.querySelector('input[name="importa"]:checked')?.value;
+            const naoImporta = importa === 'nao';
+            const importDetails = document.getElementById('import-details');
+
+            if (importDetails) {
+                importDetails.style.display = naoImporta ? 'none' : '';
+            }
+
+            if (naoImporta) {
+                clearRadioGroup('forma_importacao');
+                clearRadioGroup('perc_insumos');
+                clearRadioGroup('equipe_importacao');
+                document.getElementById('paises-importacao').value = '';
+            }
+        }
+
         // ─── CNPJ mask ───────────────────────────────────────────
         document.getElementById('cnpj').addEventListener('input', function (e) {
             let v = e.target.value.replace(/\D/g, '');
@@ -1800,7 +1851,17 @@
             e.target.value = v;
         });
 
+        document.querySelectorAll('input[name="experiencia_exportacao"]').forEach(input => {
+            input.addEventListener('change', toggleExportacaoFields);
+        });
+
+        document.querySelectorAll('input[name="importa"]').forEach(input => {
+            input.addEventListener('change', toggleImportacaoFields);
+        });
+
         // Init
+        toggleExportacaoFields();
+        toggleImportacaoFields();
         updateUI();
     </script>
 </body>
