@@ -7,8 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
     * {
       margin: 0;
@@ -372,7 +372,6 @@
       bottom: 0;
       background: linear-gradient(135deg, #1A7FC1 0%, #3DAEE9 100%);
       z-index: 1000;
-      display: flex;
       align-items: center;
       justify-content: center;
       animation: fadeIn 0.3s ease;
@@ -765,6 +764,8 @@
     let allData = [];
     let charts = {};
     let db = null;
+    let isLoadingData = false;
+    let hasLoadedData = false;
 
     // Firebase Config
     const firebaseConfig = {
@@ -890,6 +891,10 @@
     function showPanel() {
       document.getElementById('login-screen').classList.remove('active');
       document.getElementById('main-content').classList.add('active');
+
+      if (hasLoadedData || isLoadingData) {
+        return;
+      }
       
       // Carregar dados
       loadData();
@@ -904,6 +909,11 @@
     // Logout
     function handleLogout() {
       if (confirm('Tem certeza que deseja sair?\n\nVocê será desconectado da sessão admin.')) {
+        hasLoadedData = false;
+        isLoadingData = false;
+        allData = [];
+        destroyCharts();
+
         // Limpar sessão
         sessionStorage.removeItem('adminSessionToken');
         sessionStorage.removeItem('adminLoginTime');
@@ -928,10 +938,17 @@
     });
 
     async function loadData() {
+      if (isLoadingData) {
+        return;
+      }
+
       try {
+        isLoadingData = true;
+
         // Garantir que Firebase está inicializado
         if (!db) {
           console.error('Firebase não está inicializado ainda');
+          isLoadingData = false;
           setTimeout(loadData, 1000); // Tentar novamente após 1 segundo
           return;
         }
@@ -950,9 +967,12 @@
         populateFilters();
         renderTable();
         createCharts();
+        hasLoadedData = true;
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         alert('Erro ao carregar dados do Firebase. Verifique o console.');
+      } finally {
+        isLoadingData = false;
       }
     }
 
@@ -977,6 +997,7 @@
       const cities = [...new Set(allData.map(d => d.cidade).filter(Boolean))].sort();
 
       const sectorSelect = document.getElementById('sectorFilter');
+      sectorSelect.innerHTML = '<option value="">Todos os setores</option>';
       sectors.forEach(sector => {
         const option = document.createElement('option');
         option.value = sector;
@@ -985,6 +1006,7 @@
       });
 
       const citySelect = document.getElementById('cityFilter');
+      citySelect.innerHTML = '<option value="">Todas as cidades</option>';
       cities.forEach(city => {
         const option = document.createElement('option');
         option.value = city;
@@ -1056,7 +1078,18 @@
       }
     }
 
+    function destroyCharts() {
+      Object.values(charts).forEach(chart => {
+        if (chart && typeof chart.destroy === 'function') {
+          chart.destroy();
+        }
+      });
+      charts = {};
+    }
+
     function createCharts() {
+      destroyCharts();
+
       const chartColors = {
         primary: '#1A7FC1',
         secondary: '#3DAEE9',
@@ -1072,7 +1105,7 @@
         experienceData[exp] = (experienceData[exp] || 0) + 1;
       });
 
-      new Chart(document.getElementById('experienceChart'), {
+      charts.experienceChart = new Chart(document.getElementById('experienceChart'), {
         type: 'doughnut',
         data: {
           labels: Object.keys(experienceData),
@@ -1099,7 +1132,7 @@
         importData[imp] = (importData[imp] || 0) + 1;
       });
 
-      new Chart(document.getElementById('importChart'), {
+      charts.importChart = new Chart(document.getElementById('importChart'), {
         type: 'doughnut',
         data: {
           labels: Object.keys(importData),
@@ -1130,7 +1163,7 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
 
-      new Chart(document.getElementById('sectorsChart'), {
+      charts.sectorsChart = new Chart(document.getElementById('sectorsChart'), {
         type: 'bar',
         data: {
           labels: topSectors.map(([s]) => s),
@@ -1166,7 +1199,7 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
 
-      new Chart(document.getElementById('citiesChart'), {
+      charts.citiesChart = new Chart(document.getElementById('citiesChart'), {
         type: 'bar',
         data: {
           labels: topCities.map(([c]) => c),
@@ -1198,7 +1231,7 @@
         knowledgeData[knowledge] = (knowledgeData[knowledge] || 0) + 1;
       });
 
-      new Chart(document.getElementById('knowledgeChart'), {
+      charts.knowledgeChart = new Chart(document.getElementById('knowledgeChart'), {
         type: 'pie',
         data: {
           labels: Object.keys(knowledgeData),
@@ -1225,7 +1258,7 @@
         associadosData[assoc] = (associadosData[assoc] || 0) + 1;
       });
 
-      new Chart(document.getElementById('associadosChart'), {
+      charts.associadosChart = new Chart(document.getElementById('associadosChart'), {
         type: 'doughnut',
         data: {
           labels: Object.keys(associadosData),
@@ -1252,7 +1285,7 @@
         certData[cert] = (certData[cert] || 0) + 1;
       });
 
-      new Chart(document.getElementById('certificadosChart'), {
+      charts.certificadosChart = new Chart(document.getElementById('certificadosChart'), {
         type: 'pie',
         data: {
           labels: Object.keys(certData),
@@ -1287,7 +1320,7 @@
         .sort((a, b) => b[1] - a[1])
         .slice(0, 7);
 
-      new Chart(document.getElementById('difficultiesChart'), {
+      charts.difficultiesChart = new Chart(document.getElementById('difficultiesChart'), {
         type: 'bar',
         data: {
           labels: topDifficulties.map(([d]) => d),
