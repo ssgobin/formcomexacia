@@ -362,6 +362,162 @@
       opacity: 0.3;
     }
 
+    /* Login Screen */
+    #login-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #1A7FC1 0%, #3DAEE9 100%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    #login-screen.active {
+      display: flex;
+    }
+
+    .login-container {
+      background: white;
+      padding: 48px 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(26, 127, 193, 0.3);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-container h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1A7FC1;
+      margin-bottom: 12px;
+    }
+
+    .login-container p {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .form-group input {
+      padding: 12px 16px;
+      border: 2px solid #E8EEF3;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #1A7FC1;
+      box-shadow: 0 0 0 3px rgba(26, 127, 193, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #ccc;
+    }
+
+    .login-btn {
+      background: linear-gradient(135deg, #1A7FC1 0%, #3DAEE9 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(26, 127, 193, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .login-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26, 127, 193, 0.3);
+    }
+
+    .login-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .login-error {
+      display: none;
+      background: #f8d7da;
+      color: #721c24;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      border: 1px solid #f5c6cb;
+    }
+
+    .login-error.show {
+      display: block;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .login-info {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #E8EEF3;
+    }
+
+    .login-info p {
+      font-size: 11px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    /* Hidden elements */
+    #main-content {
+      display: none;
+    }
+
+    #main-content.active {
+      display: block;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-content {
@@ -407,10 +563,45 @@
       .filter-group {
         width: 100%;
       }
+
+      .login-container {
+        margin: 20px;
+        padding: 32px 24px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="active">
+    <div class="login-container">
+      <h1>🔐 Painel Admin</h1>
+      <p>Acesso restrito - ACIA</p>
+      
+      <div class="login-error" id="loginError"></div>
+
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="emailInput">Email</label>
+          <input type="email" id="emailInput" placeholder="seu email" required autofocus>
+        </div>
+
+        <div class="form-group">
+          <label for="passwordInput">Senha</label>
+          <input type="password" id="passwordInput" placeholder="sua senha" required>
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">Entrar</button>
+      </form>
+
+      <div class="login-info">
+        <p>Este painel é restrito apenas para administradores autorizados da ACIA.<br>Acesso não autorizado é monitorado.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
   <!-- Header -->
   <div class="header">
     <div class="header-content">
@@ -560,6 +751,7 @@
       </div>
     </div>
   </div>
+  </div>
 
   <script>
     // Firebase Config
@@ -579,8 +771,135 @@
     let allData = [];
     let charts = {};
 
-    // Load data on page load
-    document.addEventListener('DOMContentLoaded', loadData);
+    // Credenciais de Admin
+    const ADMIN_CREDENTIALS = {
+      email: 'admin@acia.com.br',
+      password: 'Acia@2026'
+    };
+
+    // Verificar autenticação ao carregar
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuthOnLoad();
+    });
+
+    // Verificar se usuário está autenticado
+    function checkAuthOnLoad() {
+      const sessionToken = sessionStorage.getItem('adminSessionToken');
+      const loginTime = sessionStorage.getItem('adminLoginTime');
+      
+      // Sesção expira em 8 horas
+      if (sessionToken && loginTime) {
+        const now = Date.now();
+        const sessionAge = now - parseInt(loginTime);
+        const eightHours = 8 * 60 * 60 * 1000;
+        
+        if (sessionAge < eightHours) {
+          // Sessão válida - mostrar painel
+          showPanel();
+          return;
+        } else {
+          // Sessão expirada - fazer logout
+          sessionStorage.removeItem('adminSessionToken');
+          sessionStorage.removeItem('adminLoginTime');
+        }
+      }
+      
+      // Não autenticado - mostrar login
+      showLogin();
+    }
+
+    // Handle login form submission
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const loginBtn = document.getElementById('loginBtn');
+      const errorDiv = document.getElementById('loginError');
+      
+      // Limpar erro anterior
+      errorDiv.classList.remove('show');
+      errorDiv.textContent = '';
+      
+      // Validar credenciais
+      if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+        // Credenciais corretas
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Entrando...';
+        
+        // Criar token de sessão (simples hash)
+        const sessionToken = btoa(email + ':' + Date.now() + ':' + Math.random());
+        sessionStorage.setItem('adminSessionToken', sessionToken);
+        sessionStorage.setItem('adminLoginTime', Date.now().toString());
+        sessionStorage.setItem('adminEmail', email);
+        
+        // Mostrar painel após 500ms
+        setTimeout(() => {
+          showPanel();
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Entrar';
+          document.getElementById('emailInput').value = '';
+          document.getElementById('passwordInput').value = '';
+        }, 500);
+      } else {
+        // Credenciais incorretas
+        errorDiv.textContent = '❌ Email ou senha incorretos. Tente novamente.';
+        errorDiv.classList.add('show');
+        
+        // Animar shake
+        document.getElementById('login-screen').style.animation = 'none';
+        setTimeout(() => {
+          document.getElementById('login-screen').style.animation = 'fadeIn 0.3s ease';
+        }, 10);
+      }
+    }
+
+    // Mostrar tela de login
+    function showLogin() {
+      document.getElementById('login-screen').classList.add('active');
+      document.getElementById('main-content').classList.remove('active');
+    }
+
+    // Mostrar painel admin
+    function showPanel() {
+      document.getElementById('login-screen').classList.remove('active');
+      document.getElementById('main-content').classList.add('active');
+      
+      // Carregar dados
+      loadData();
+      
+      // Mostrar email do usuário (opcional)
+      const email = sessionStorage.getItem('adminEmail');
+      if (email) {
+        console.log(`✅ Logado como: ${email}`);
+      }
+    }
+
+    // Logout
+    function handleLogout() {
+      if (confirm('Tem certeza que deseja sair?\n\nVocê será desconectado da sessão admin.')) {
+        // Limpar sessão
+        sessionStorage.removeItem('adminSessionToken');
+        sessionStorage.removeItem('adminLoginTime');
+        sessionStorage.removeItem('adminEmail');
+        
+        // Voltar para login
+        showLogin();
+        
+        // Limpar formulário
+        document.getElementById('emailInput').value = '';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('emailInput').focus();
+      }
+    }
+
+    // Modificar logout button text
+    window.addEventListener('load', () => {
+      const logoutBtn = document.querySelector('.logout-btn');
+      if (logoutBtn) {
+        logoutBtn.textContent = '🚪 Sair';
+      }
+    });
 
     async function loadData() {
       try {
@@ -1083,10 +1402,6 @@
 
       XLSX.utils.book_append_sheet(wb, worksheet, 'Diagnósticos');
       XLSX.writeFile(wb, `Diagnosticos_ACIA_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.xlsx`);
-    }
-
-    function handleLogout() {
-      alert('Implementar autenticação com senha aqui');
     }
   </script>
 </body>
