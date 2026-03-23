@@ -1157,44 +1157,46 @@
                 </div>
 
                 <div class="card">
-                    <div class="field-group">
-                        <label class="field-label" for="produtos-exportados">Principais produtos exportados:</label>
-                        <input type="text" id="produtos-exportados" name="produtos_exportados"
-                            placeholder="Liste os principais produtos" />
-                    </div>
+                    <div id="section-2-followup-wrap">
+                        <div class="field-group">
+                            <label class="field-label" for="produtos-exportados">Principais produtos exportados:</label>
+                            <input type="text" id="produtos-exportados" name="produtos_exportados"
+                                placeholder="Liste os principais produtos" />
+                        </div>
 
-                    <div class="field-group">
-                        <label class="field-label" for="ncm">NCM(s) dos produtos:</label>
-                        <input type="text" id="ncm" name="ncm" placeholder="Ex.: 6109.10.00, 8471.30.12" />
-                        <p class="field-hint">Nomenclatura Comum do Mercosul – código de classificação do produto</p>
-                    </div>
+                        <div class="field-group">
+                            <label class="field-label" for="ncm">NCM(s) dos produtos:</label>
+                            <input type="text" id="ncm" name="ncm" placeholder="Ex.: 6109.10.00, 8471.30.12" />
+                            <p class="field-hint">Nomenclatura Comum do Mercosul – código de classificação do produto</p>
+                        </div>
 
-                    <div class="card-divider"></div>
+                        <div class="card-divider"></div>
 
-                    <div class="field-group">
-                        <label class="field-label">Os produtos possuem certificações internacionais? <span
-                                class="req">*</span></label>
-                        <div class="options-grid" style="margin-top:8px;">
-                            <div class="option-chip">
-                                <input type="radio" id="cert-sim" name="certificacoes" value="sim" required />
-                                <label for="cert-sim">Sim</label>
-                            </div>
-                            <div class="option-chip">
-                                <input type="radio" id="cert-nao" name="certificacoes" value="nao" />
-                                <label for="cert-nao">Não</label>
-                            </div>
-                            <div class="option-chip">
-                                <input type="radio" id="cert-processo" name="certificacoes" value="em_processo" />
-                                <label for="cert-processo">Em processo</label>
-                            </div>
-                            <div class="option-chip">
-                                <input type="radio" id="cert-na" name="certificacoes" value="nao_aplica" />
-                                <label for="cert-na">Não se aplica</label>
+                        <div class="field-group">
+                            <label class="field-label">Os produtos possuem certificações internacionais? <span
+                                    class="req">*</span></label>
+                            <div class="options-grid" style="margin-top:8px;">
+                                <div class="option-chip">
+                                    <input type="radio" id="cert-sim" name="certificacoes" value="sim" required />
+                                    <label for="cert-sim">Sim</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="cert-nao" name="certificacoes" value="nao" />
+                                    <label for="cert-nao">Não</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="cert-processo" name="certificacoes" value="em_processo" />
+                                    <label for="cert-processo">Em processo</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="cert-na" name="certificacoes" value="nao_aplica" />
+                                    <label for="cert-na">Não se aplica</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card-divider"></div>
+                        <div class="card-divider"></div>
+                    </div>
 
                     <div class="field-group">
                         <label class="field-label">A capacidade produtiva atual atende ao aumento de demanda externa?
@@ -1645,7 +1647,10 @@
                     }
                     break;
                 case 2:
-                    r('certificacoes', 'Certificações internacionais');
+                    const experienciaExportacaoEtapa3 = document.querySelector('input[name="experiencia_exportacao"]:checked')?.value;
+                    if (experienciaExportacaoEtapa3 && experienciaExportacaoEtapa3 !== 'nunca') {
+                        r('certificacoes', 'Certificações internacionais');
+                    }
                     r('capacidade_produtiva', 'Capacidade produtiva');
                     break;
                 case 3:
@@ -1840,6 +1845,22 @@
             }
         }
 
+        function toggleEtapa3Fields() {
+            const experiencia = document.querySelector('input[name="experiencia_exportacao"]:checked')?.value;
+            const nuncaExportou = experiencia === 'nunca';
+            const etapa3Followup = document.getElementById('section-2-followup-wrap');
+
+            if (etapa3Followup) {
+                etapa3Followup.style.display = nuncaExportou ? 'none' : '';
+            }
+
+            if (nuncaExportou) {
+                document.getElementById('produtos-exportados').value = '';
+                document.getElementById('ncm').value = '';
+                clearRadioGroup('certificacoes');
+            }
+        }
+
         // ─── CNPJ mask ───────────────────────────────────────────
         document.getElementById('cnpj').addEventListener('input', function (e) {
             let v = e.target.value.replace(/\D/g, '');
@@ -1852,7 +1873,10 @@
         });
 
         document.querySelectorAll('input[name="experiencia_exportacao"]').forEach(input => {
-            input.addEventListener('change', toggleExportacaoFields);
+            input.addEventListener('change', () => {
+                toggleExportacaoFields();
+                toggleEtapa3Fields();
+            });
         });
 
         document.querySelectorAll('input[name="importa"]').forEach(input => {
@@ -1861,6 +1885,7 @@
 
         // Init
         toggleExportacaoFields();
+        toggleEtapa3Fields();
         toggleImportacaoFields();
         updateUI();
     </script>
