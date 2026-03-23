@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diagnóstico – Núcleo de Comex ACIA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --blue: #1A7FC1;
+            --blue-mid: #3DAEE9;
+            --blue-light: #C8E9F8;
+            --blue-pale: #EAF6FD;
+            --white: #FFFFFF;
+            --gray-text: #3A4A5C;
+            --gray-sub: #637083;
+            --gray-border: #D0E7F5;
+            --shadow: 0 4px 24px rgba(26, 127, 193, 0.10);
+            --radius: 14px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(160deg, #EAF6FD 0%, #F4FBFF 50%, #FFFFFF 100%);
+            min-height: 100vh;
+            color: var(--gray-text);
+        }
+
+        /* ── HEADER ─────────────────────────────────────────────── */
+        header {
+            background: var(--white);
+            border-bottom: 3px solid var(--blue-light);
+            box-shadow: 0 2px 18px rgba(26, 127, 193, 0.08);
+            padding: 24px 40px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .header-logos {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .header-logos img {
+            height: 65px;
+            object-fit: contain;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 50px;
+            background: var(--blue-light);
+        }
+
+        .header-text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .header-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            line-height: 1.3;
+            margin: 0 0 2px 0;
+        }
+
+        .header-text p {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-sub);
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* ── PROGRESS BAR ────────────────────────────────────────── */
+        .progress-wrap {
+            background: var(--white);
+            padding: 12px 40px 0;
+            border-bottom: 1px solid var(--gray-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(26, 127, 193, 0.06);
+            overflow: hidden;
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: flex-end;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scroll-behavior: smooth;
+            padding-bottom: 4px;
+        }
+
+        .progress-steps::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .progress-steps::-webkit-scrollbar-track {
+            background: var(--blue-pale);
+        }
+
+        .progress-steps::-webkit-scrollbar-thumb {
+            background: var(--blue-light);
+            border-radius: 3px;
+        }
+
+        .step-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 0 12px 10px;
+            position: relative;
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .step-btn:hover .step-circle {
+            border-color: var(--blue);
+        }
+
+        .step-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            border-radius: 3px 3px 0 0;
+            transition: background .25s;
+        }
+
+        .step-btn.active::after {
+            background: var(--blue);
+        }
+
+        .step-btn.done::after {
+            background: var(--blue-mid);
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: 2px solid var(--gray-border);
+            color: var(--gray-sub);
+            background: var(--white);
+            transition: all .25s;
+        }
+
+        .step-btn.active .step-circle {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: var(--white);
+            box-shadow: 0 0 0 3px var(--blue-light);
+            transform: scale(1.05);
+        }
+
+        .step-btn.done .step-circle {
+            background: var(--blue-mid);
+            border-color: var(--blue-mid);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--gray-sub);
+            text-align: center;
+            letter-spacing: 0.02em;
+            max-width: 70px;
+            line-height: 1.2;
+            transition: color .25s;
+        }
+
+        .step-btn.active .step-label {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .progress-bar-track {
+            height: 4px;
+            background: var(--blue-pale);
+            margin: 0 -40px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--blue-mid));
+            border-radius: 0 4px 4px 0;
+            transition: width .4s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        /* ── MAIN LAYOUT ─────────────────────────────────────────── */
+        main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 32px 20px 80px;
+        }
+
+        /* ── SECTION CARD ────────────────────────────────────────── */
+        .form-section {
+            display: none;
+            animation: fadeIn .35s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(26, 127, 193, 0.25);
+        }
+
+        .section-title {
+            flex: 1;
+        }
+
+        .section-title h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin: 0 0 4px 0;
+        }
+
+        .section-title p {
+            font-size: 0.75rem;
+            color: var(--gray-sub);
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            border: 1px solid var(--gray-border);
+        }
+
+        /* ── FIELD GROUPS ────────────────────────────────────────── */
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label.field-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--gray-text);
+            margin-bottom: 8px;
+            letter-spacing: 0.015em;
+        }
+
+        label.field-label span.req {
+            color: var(--blue);
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            color: var(--gray-text);
+            background: var(--blue-pale);
+            transition: border-color .2s, box-shadow .2s, background .2s;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--blue);
+            background: var(--white);
+            box-shadow: 0 0 0 3px var(--blue-light);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 28px 16px 80px;
+            }
+
+            .card {
+                padding: 20px 22px;
+            }
+
+            header {
+                padding: 20px 16px;
+                gap: 16px;
+            }
+
+            .header-logos img {
+                height: 55px;
+            }
+
+            .header-text h1 {
+                font-size: 0.95rem;
+            }
+
+            .header-text p {
+                font-size: 0.7rem;
+            }
+
+            .progress-wrap {
+                padding: 10px 16px 0;
+            }
+
+            .progress-bar-track {
+                margin: 0 -16px;
+            }
+
+            .step-btn {
+                padding: 0 10px 8px;
+            }
+
+            .step-label {
+                font-size: 0.55rem;
+                max-width: 60px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            main {
+                padding: 24px 14px 80px;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .card {
+                padding: 18px 18px;
+                margin-bottom: 18px;
+            }
+
+            header {
+                padding: 16px 14px;
+                gap: 12px;
+            }
+
+            .header-logos {
+                gap: 10px;
+            }
+
+            .header-logos img {
+                height: 48px;
+            }
+
+            .header-divider {
+                display: none;
+            }
+
+            .header-text h1 {
+                font-size: 0.9rem;
+            }
+
+            .header-text p {
+                font-size: 0.65rem;
+            }
+
+            .progress-wrap {
+                padding: 8px 12px 0;
+                gap: 2px;
+            }
+
+            .progress-bar-track {
+                margin: 0 -12px;
+            }
+
+            .step-btn {
+                padding: 0 8px 6px;
+                gap: 3px;
+            }
+
+            .step-circle {
+                width: 28px;
+                height: 28px;
+                font-size: 0.65rem;
+            }
+
+            .step-label {
+                font-size: 0.5rem;
+                max-width: 50px;
+            }
+
+            .section-header {
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .section-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+            }
+
+            .section-title h2 {
+                font-size: 0.95rem;
+            }
+
+            .section-title p {
+                font-size: 0.7rem;
+            }
+
+            label.field-label {
+                font-size: 0.75rem;
+                margin-bottom: 6px;
+            }
+
+            .card-divider {
+                margin: 16px 0;
+            }
+        }
+
+        /* ── RADIO / CHECKBOX ────────────────────────────────────── */
+        .options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .option-chip {
+            position: relative;
+            min-width: fit-content;
+        }
+
+        .option-chip input[type="radio"],
+        .option-chip input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .option-chip label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 50px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--gray-sub);
+            cursor: pointer;
+            background: var(--white);
+            transition: all .2s;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .option-chip label:hover {
+            border-color: var(--blue-light);
+            background: var(--blue-pale);
+        }
+
+        .option-chip label::before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-border);
+            background: var(--white);
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .option-chip.checkbox label::before {
+            border-radius: 4px;
+        }
+
+        .option-chip input:checked+label {
+            background: var(--blue-pale);
+            border-color: var(--blue);
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .option-chip input:checked+label::before {
+            background: var(--blue);
+            border-color: var(--blue);
+            box-shadow: inset 0 0 0 2.5px white;
+        }
+
+        .option-chip.checkbox input:checked+label::before {
+            background: var(--blue);
+            border-color: var(--blue);
+            box-shadow: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%23fff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 9px;
+        }
+
+        .options-col {
+            flex-direction: column;
+        }
+
+        .options-col .option-chip {
+            width: 100%;
+        }
+
+        .options-col .option-chip label {
+            white-space: normal;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        /* ── OUTROS FIELD (inside checkbox) ─────────────────────── */
+        .outros-wrap {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .outros-wrap.visible {
+            display: block;
+        }
+
+        /* ── DIVIDER ─────────────────────────────────────────────── */
+        .card-divider {
+            height: 1px;
+            background: var(--blue-pale);
+            margin: 18px 0;
+        }
+
+        /* ── NAVIGATION ──────────────────────────────────────────── */
+        .nav-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--gray-border);
+            padding: 16px 20px;
+            padding-bottom: max(16px, calc(env(safe-area-inset-bottom, 0) + 16px));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            z-index: 99;
+            box-shadow: 0 -2px 12px rgba(26, 127, 193, 0.08);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+            color: white;
+            box-shadow: 0 4px 14px rgba(26, 127, 193, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(26, 127, 193, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--blue);
+            border: 1.5px solid var(--blue-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--blue-pale);
+            border-color: var(--blue);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .step-counter {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-sub);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                gap: 8px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 10px 16px;
+                font-size: 0.75rem;
+            }
+
+            .step-counter {
+                display: none;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .nav-buttons {
+                padding: 12px 12px;
+                padding-bottom: max(12px, calc(env(safe-area-inset-bottom, 0) + 12px));
+                gap: 6px;
+            }
+
+            .btn {
+                padding: 9px 12px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ── SUCCESS SCREEN ──────────────────────────────────────── */
+        #success-screen {
+            display: none;
+            text-align: center;
+            padding: 60px 20px 100px;
+            animation: fadeIn .5s ease;
+        }
+
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            margin: 0 auto 28px;
+            box-shadow: 0 8px 28px rgba(26, 127, 193, 0.3);
+        }
+
+        #success-screen h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--blue);
+            margin-bottom: 12px;
+        }
+
+        #success-screen p {
+            font-size: 0.85rem;
+            color: var(--gray-sub);
+            max-width: 420px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 540px) {
+            #success-screen {
+                padding: 40px 16px 100px;
+            }
+
+            .success-icon {
+                width: 75px;
+                height: 75px;
+                font-size: 2rem;
+            }
+
+            #success-screen h2 {
+                font-size: 1.2rem;
+            }
+
+            #success-screen p {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ── TOOLTIPS / HELPER TEXT ──────────────────────────────── */
+        .field-hint {
+            font-size: 0.7rem;
+            color: var(--gray-sub);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* ── SECTION BADGE ───────────────────────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 50px;
+            background: var(--blue-pale);
+            color: var(--blue);
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* ── ERROR TOAST ────────────────────────────────────────── */
+        #error-toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #fff;
+            border: 1.5px solid #e74c3c;
+            border-left: 5px solid #e74c3c;
+            border-radius: 10px;
+            padding: 14px 22px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.14);
+            opacity: 0;
+            transition: opacity .3s, transform .3s;
+            z-index: 9999;
+            font-size: 0.8rem;
+            color: #c0392b;
+            pointer-events: none;
+        }
+
+        #error-toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        #error-toast strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+        }
+
+        #error-toast ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        #error-toast li {
+            margin-bottom: 2px;
+        }
+
+        /* ── FIELD ERROR HIGHLIGHT ──────────────────────────────── */
+        .field-error input,
+        .field-error textarea {
+            border-color: #e74c3c !important;
+            background: #fff5f5 !important;
+        }
+
+        .field-error .options-grid {
+            outline: 2px dashed #e74c3c;
+            border-radius: 8px;
+            padding: 6px;
+        }
+
+        .error-msg {
+            font-size: 0.72rem;
+            color: #e74c3c;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        /* ── SHAKE ──────────────────────────────────────────────── */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(8px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-logos">
+            <img src="img/Principal.svg" alt="Logo ACIA" />
+            <div class="header-divider"></div>
+        </div>
+        <div class="header-text">
+            <h1>Núcleo de Comércio Exterior – ACIA</h1>
+            <p>Questionário para Diagnóstico da Maturidade Exportadora e Prática de Importação</p>
+        </div>
+    </header>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+        <div class="progress-steps" id="progress-steps">
+            <button class="step-btn active" data-step="0" onclick="goToStep(0)">
+                <div class="step-circle">1</div>
+                <span class="step-label">Perfil</span>
+            </button>
+            <button class="step-btn" data-step="1" onclick="goToStep(1)">
+                <div class="step-circle">2</div>
+                <span class="step-label">Exportação</span>
+            </button>
+            <button class="step-btn" data-step="2" onclick="goToStep(2)">
+                <div class="step-circle">3</div>
+                <span class="step-label">Produtos</span>
+            </button>
+            <button class="step-btn" data-step="3" onclick="goToStep(3)">
+                <div class="step-circle">4</div>
+                <span class="step-label">Estrutura</span>
+            </button>
+            <button class="step-btn" data-step="4" onclick="goToStep(4)">
+                <div class="step-circle">5</div>
+                <span class="step-label">Importação</span>
+            </button>
+            <button class="step-btn" data-step="5" onclick="goToStep(5)">
+                <div class="step-circle">6</div>
+                <span class="step-label">Desafios</span>
+            </button>
+            <button class="step-btn" data-step="6" onclick="goToStep(6)">
+                <div class="step-circle">7</div>
+                <span class="step-label">PEIEX</span>
+            </button>
+        </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-bar" style="width:14.28%"></div>
+        </div>
+    </div>
+
+    <!-- MAIN FORM -->
+    <main>
+        <form id="main-form" novalidate>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 1 – PERFIL DA EMPRESA
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section active" id="section-0">
+                <div class="section-header">
+                    <div class="section-icon">🏢</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 1 de 7</div>
+                        <h2>Perfil da Empresa</h2>
+                        <p>Informações básicas sobre a sua empresa</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label" for="razao-social">Razão Social <span class="req">*</span></label>
+                        <input type="text" id="razao-social" name="razao_social"
+                            placeholder="Ex.: Empresa Exemplo Ltda." required />
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="nome-fantasia">Nome Fantasia</label>
+                            <input type="text" id="nome-fantasia" name="nome_fantasia" placeholder="Ex.: Exemplo" />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="cnpj">CNPJ <span class="req">*</span></label>
+                            <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" maxlength="18"
+                                required />
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="cidade">Cidade <span class="req">*</span></label>
+                            <input type="text" id="cidade" name="cidade" placeholder="Ex.: Americana" required />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="estado">Estado <span class="req">*</span></label>
+                            <input type="text" id="estado" name="estado" placeholder="Ex.: SP" maxlength="2" required />
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="setor">Setor de Atuação <span class="req">*</span></label>
+                        <input type="text" id="setor" name="setor" placeholder="Ex.: Têxtil, Agronegócio, Tecnologia..."
+                            required />
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="produto-principal">Principal Produto / Serviço <span
+                                class="req">*</span></label>
+                        <input type="text" id="produto-principal" name="produto_principal"
+                            placeholder="Descreva o principal produto ou serviço" required />
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="descricao-produtos">Descrição dos Produtos</label>
+                        <textarea id="descricao-produtos" name="descricao_produtos"
+                            placeholder="Descreva brevemente seus produtos ou serviços..."></textarea>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="num-funcionarios">Número de Funcionários <span
+                                    class="req">*</span></label>
+                            <input type="text" id="num-funcionarios" name="num_funcionarios" placeholder="Ex.: 45"
+                                required />
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">É associado ACIA? <span class="req">*</span></label>
+                            <div class="options-grid" style="margin-top:8px;">
+                                <div class="option-chip">
+                                    <input type="radio" id="acia-sim" name="associado_acia" value="sim" required />
+                                    <label for="acia-sim">Sim</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="acia-nao" name="associado_acia" value="nao" />
+                                    <label for="acia-nao">Não</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 2 – EXPERIÊNCIA COM EXPORTAÇÃO
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section" id="section-1">
+                <div class="section-header">
+                    <div class="section-icon">🌍</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 2 de 7</div>
+                        <h2>Experiência com Exportação</h2>
+                        <p>Histórico e situação atual de exportações</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label">Sua empresa já exportou? <span class="req">*</span></label>
+                        <div class="options-grid options-col" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="exp-nunca" name="experiencia_exportacao" value="nunca"
+                                    required />
+                                <label for="exp-nunca">Nunca exportou</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="exp-passado" name="experiencia_exportacao" value="passado" />
+                                <label for="exp-passado">Já exportou no passado</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="exp-atual" name="experiencia_exportacao" value="atual" />
+                                <label for="exp-atual">Exporta atualmente</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group" id="desde-quando-wrap">
+                        <label class="field-label" for="desde-quando">Se exporta ou já exportou, desde quando?</label>
+                        <input type="text" id="desde-quando" name="desde_quando" placeholder="Ex.: 2018" />
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Percentual do faturamento vindo de exportações:</label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="fat-0" name="perc_faturamento" value="0-5%" />
+                                <label for="fat-0">0% – 5%</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="fat-6" name="perc_faturamento" value="6-10%" />
+                                <label for="fat-6">6% – 10%</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="fat-11" name="perc_faturamento" value="11-30%" />
+                                <label for="fat-11">11% – 30%</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="fat-31" name="perc_faturamento" value="31-50%" />
+                                <label for="fat-31">31% – 50%</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="fat-50" name="perc_faturamento" value=">50%" />
+                                <label for="fat-50">Acima de 50%</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="paises-exportacao">Países para os quais já exportou:</label>
+                        <input type="text" id="paises-exportacao" name="paises_exportacao"
+                            placeholder="Ex.: Argentina, EUA, Alemanha..." />
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">Forma de exportação:</label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="forma-direta" name="forma_exportacao" value="direta" />
+                                <label for="forma-direta">Direta</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="forma-indireta" name="forma_exportacao" value="indireta" />
+                                <label for="forma-indireta">Indireta (trading / comercial exportadora)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 3 – PRODUTOS E CLASSIFICAÇÃO
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section" id="section-2">
+                <div class="section-header">
+                    <div class="section-icon">📦</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 3 de 7</div>
+                        <h2>Produtos e Classificação</h2>
+                        <p>Detalhes sobre os produtos e certificações</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label" for="produtos-exportados">Principais produtos exportados:</label>
+                        <input type="text" id="produtos-exportados" name="produtos_exportados"
+                            placeholder="Liste os principais produtos" />
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="ncm">NCM(s) dos produtos:</label>
+                        <input type="text" id="ncm" name="ncm" placeholder="Ex.: 6109.10.00, 8471.30.12" />
+                        <p class="field-hint">Nomenclatura Comum do Mercosul – código de classificação do produto</p>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">Os produtos possuem certificações internacionais? <span
+                                class="req">*</span></label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="cert-sim" name="certificacoes" value="sim" required />
+                                <label for="cert-sim">Sim</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="cert-nao" name="certificacoes" value="nao" />
+                                <label for="cert-nao">Não</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="cert-processo" name="certificacoes" value="em_processo" />
+                                <label for="cert-processo">Em processo</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="cert-na" name="certificacoes" value="nao_aplica" />
+                                <label for="cert-na">Não se aplica</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">A capacidade produtiva atual atende ao aumento de demanda externa?
+                            <span class="req">*</span></label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="cap-sim" name="capacidade_produtiva" value="sim" required />
+                                <label for="cap-sim">Sim</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="cap-nao" name="capacidade_produtiva" value="nao" />
+                                <label for="cap-nao">Não</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 4 – ESTRUTURA E PREPARAÇÃO
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section" id="section-3">
+                <div class="section-header">
+                    <div class="section-icon">🏗️</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 4 de 7</div>
+                        <h2>Estrutura e Preparação para Exportação</h2>
+                        <p>Recursos humanos e conhecimento da empresa</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label">Possui equipe ou responsável por exportação na empresa? <span
+                                class="req">*</span></label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="equipe-exp-sim" name="equipe_exportacao" value="sim" required />
+                                <label for="equipe-exp-sim">Sim</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="equipe-exp-nao" name="equipe_exportacao" value="nao" />
+                                <label for="equipe-exp-nao">Não</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">Possui material de divulgação em outro idioma? <span
+                                class="req">*</span></label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="material-sim" name="material_idioma" value="sim" required />
+                                <label for="material-sim">Sim</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="material-nao" name="material_idioma" value="nao" />
+                                <label for="material-nao">Não</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">Já participou de feiras ou rodadas de negócios? <span
+                                class="req">*</span></label>
+                        <div class="options-grid options-col" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="feira-brasil" name="feiras" value="brasil" required />
+                                <label for="feira-brasil">Sim – no Brasil</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="feira-exterior" name="feiras" value="exterior" />
+                                <label for="feira-exterior">Sim – fora do Brasil</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="feira-nunca" name="feiras" value="nunca" />
+                                <label for="feira-nunca">Nunca participei</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">Grau de conhecimento sobre processos de exportação: <span
+                                class="req">*</span></label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="grau-nenhum" name="grau_conhecimento" value="nenhum" required />
+                                <label for="grau-nenhum">Nenhum</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="grau-basico" name="grau_conhecimento" value="basico" />
+                                <label for="grau-basico">Básico</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="grau-inter" name="grau_conhecimento" value="intermediario" />
+                                <label for="grau-inter">Intermediário</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="grau-avancado" name="grau_conhecimento" value="avancado" />
+                                <label for="grau-avancado">Avançado</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 5 – IMPORTAÇÃO
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section" id="section-4">
+                <div class="section-header">
+                    <div class="section-icon">🚢</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 5 de 7</div>
+                        <h2>Importação</h2>
+                        <p>Informações sobre as importações da empresa</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label">A empresa importa insumos ou produtos? <span
+                                class="req">*</span></label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="importa-sim" name="importa" value="sim" required />
+                                <label for="importa-sim">Sim</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="importa-nao" name="importa" value="nao" />
+                                <label for="importa-nao">Não</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="import-details">
+                        <div class="card-divider"></div>
+
+                        <div class="field-group">
+                            <label class="field-label">Forma de importação:</label>
+                            <div class="options-grid" style="margin-top:8px;">
+                                <div class="option-chip">
+                                    <input type="radio" id="imp-direta" name="forma_importacao" value="direta" />
+                                    <label for="imp-direta">Direta</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="imp-trading" name="forma_importacao" value="trading" />
+                                    <label for="imp-trading">Via trading / intermediário</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="paises-importacao">Principais países de origem das
+                                importações:</label>
+                            <input type="text" id="paises-importacao" name="paises_importacao"
+                                placeholder="Ex.: China, EUA, Alemanha..." />
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <div class="field-group">
+                            <label class="field-label">Percentual de insumos importados no custo total:</label>
+                            <div class="options-grid" style="margin-top:8px;">
+                                <div class="option-chip">
+                                    <input type="radio" id="pinsp-0" name="perc_insumos" value="0%" />
+                                    <label for="pinsp-0">0%</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="pinsp-10" name="perc_insumos" value="até 10%" />
+                                    <label for="pinsp-10">Até 10%</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="pinsp-11" name="perc_insumos" value="11-30%" />
+                                    <label for="pinsp-11">11% – 30%</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="pinsp-31" name="perc_insumos" value="31-50%" />
+                                    <label for="pinsp-31">31% – 50%</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="pinsp-50" name="perc_insumos" value=">50%" />
+                                    <label for="pinsp-50">Acima de 50%</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">Possui equipe ou responsável por importação na empresa?</label>
+                            <div class="options-grid" style="margin-top:8px;">
+                                <div class="option-chip">
+                                    <input type="radio" id="equipe-imp-sim" name="equipe_importacao" value="sim" />
+                                    <label for="equipe-imp-sim">Sim</label>
+                                </div>
+                                <div class="option-chip">
+                                    <input type="radio" id="equipe-imp-nao" name="equipe_importacao" value="nao" />
+                                    <label for="equipe-imp-nao">Não</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 6 – INTERESSES E DESAFIOS
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section" id="section-5">
+                <div class="section-header">
+                    <div class="section-icon">🎯</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 6 de 7</div>
+                        <h2>Interesses e Desafios</h2>
+                        <p>Dificuldades e áreas nas quais deseja apoio</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label">Principais dificuldades para exportar <small
+                                style="font-weight:400;">(pode marcar mais de uma)</small>:</label>
+                        <div class="options-grid options-col" style="margin-top:8px;">
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-conhecimento" name="dificuldades"
+                                    value="falta_conhecimento" />
+                                <label for="dif-conhecimento">Falta de conhecimento</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-demanda" name="dificuldades" value="falta_demanda" />
+                                <label for="dif-demanda">Falta de demanda internacional</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-burocracia" name="dificuldades" value="burocracia" />
+                                <label for="dif-burocracia">Burocracia</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-logistica" name="dificuldades" value="logistica" />
+                                <label for="dif-logistica">Logística</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-preco" name="dificuldades" value="preco_competitivo" />
+                                <label for="dif-preco">Preço competitivo</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-cert" name="dificuldades" value="certificacoes" />
+                                <label for="dif-cert">Certificações</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="dif-idioma" name="dificuldades" value="idioma" />
+                                <label for="dif-idioma">Idioma</label>
+                            </div>
+                            <div class="option-chip checkbox" id="dif-outros-chip">
+                                <input type="checkbox" id="dif-outros-cb" name="dificuldades" value="outros"
+                                    onchange="toggleOutros(this)" />
+                                <label for="dif-outros-cb">Outros</label>
+                            </div>
+                        </div>
+                        <div class="outros-wrap" id="outros-wrap">
+                            <input type="text" id="dif-outros-text" name="dificuldades_outros"
+                                placeholder="Descreva outras dificuldades..." />
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">Interesse em exportar (caso ainda não exporte):</label>
+                        <div class="options-grid" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="int-alto" name="interesse_exportar" value="alto" />
+                                <label for="int-alto">Alto</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="int-medio" name="interesse_exportar" value="medio" />
+                                <label for="int-medio">Médio</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="int-baixo" name="interesse_exportar" value="baixo" />
+                                <label for="int-baixo">Baixo</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-divider"></div>
+
+                    <div class="field-group">
+                        <label class="field-label">Gostaria de apoio para <small style="font-weight:400;">(pode marcar
+                                mais de uma)</small>:</label>
+                        <div class="options-grid options-col" style="margin-top:8px;">
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="apoio-iniciar" name="apoio" value="iniciar_exportacao" />
+                                <label for="apoio-iniciar">Iniciar exportação</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="apoio-expandir" name="apoio" value="expandir_mercados" />
+                                <label for="apoio-expandir">Expandir mercados e vender</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="apoio-adequacao" name="apoio" value="adequacao_produto" />
+                                <label for="apoio-adequacao">Adequação de produto</label>
+                            </div>
+                            <div class="option-chip checkbox">
+                                <input type="checkbox" id="apoio-logistica" name="apoio"
+                                    value="logistica_internacional" />
+                                <label for="apoio-logistica">Logística internacional</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 7 – PEIEX
+  ═══════════════════════════════════════════════════════════ -->
+            <div class="form-section" id="section-6">
+                <div class="section-header">
+                    <div class="section-icon">📋</div>
+                    <div class="section-title">
+                        <div class="badge">Seção 7 de 7</div>
+                        <h2>Sobre o PEIEX</h2>
+                        <p>Programa de Qualificação para Exportação da APEX em parceria com o SEBRAE</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="field-group">
+                        <label class="field-label">Qual é a sua situação com o PEIEX? <span class="req">*</span></label>
+                        <div class="options-grid options-col" style="margin-top:8px;">
+                            <div class="option-chip">
+                                <input type="radio" id="peiex-fazendo" name="peiex" value="fazendo" required />
+                                <label for="peiex-fazendo">Estou fazendo o programa</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="peiex-concluiu" name="peiex" value="concluiu" />
+                                <label for="peiex-concluiu">Já concluí</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="peiex-aguardando" name="peiex" value="aguardando" />
+                                <label for="peiex-aguardando">Estou aguardando ser chamado</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="peiex-conhece" name="peiex" value="conhece_nao_inscrito" />
+                                <label for="peiex-conhece">Conheço mas ainda não me inscrevi</label>
+                            </div>
+                            <div class="option-chip">
+                                <input type="radio" id="peiex-nao-conhece" name="peiex" value="nao_conhece" />
+                                <label for="peiex-nao-conhece">Não conheço o programa</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary card before submit -->
+                <div class="card"
+                    style="background: linear-gradient(135deg, var(--blue-pale) 0%, var(--white) 100%); border-color: var(--blue-light);">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <div style="font-size:2rem;">✅</div>
+                        <div>
+                            <p style="font-weight:700; color:var(--blue); font-size:0.9rem;">Tudo pronto!</p>
+                            <p style="font-size:0.78rem; color:var(--gray-sub); margin-top:4px; line-height:1.6;">Revise
+                                suas respostas e clique em <strong>Enviar Diagnóstico</strong> para concluir o
+                                questionário. Seus dados serão encaminhados ao Núcleo de Comércio Exterior da ACIA.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <!-- SUCCESS -->
+        <div id="success-screen">
+            <div class="success-icon">🌐</div>
+            <h2>Diagnóstico Enviado!</h2>
+            <p>Obrigado pela participação. O Núcleo de Comércio Exterior da ACIA entrará em contato em breve com
+                informações personalizadas para a sua empresa.</p>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="nav-buttons" id="nav-buttons">
+            <button type="button" class="btn btn-secondary" id="btn-prev" onclick="prevStep()" disabled>
+                ← Anterior
+            </button>
+            <span class="step-counter" id="step-counter">Etapa 1 de 7</span>
+            <button type="button" class="btn btn-primary" id="btn-next" onclick="nextStep()">
+                Próximo →
+            </button>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+
+    <script>
+        // ─── Firebase Setup ──────────────────────────────────────
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnri8AGavFUCUvi17eyVPTYmeXPgyct48",
+            authDomain: "comexacia.firebaseapp.com",
+            projectId: "comexacia",
+            storageBucket: "comexacia.firebasestorage.app",
+            messagingSenderId: "369087800859",
+            appId: "1:369087800859:web:a34e3aa95b3cffb8d33abe",
+            measurementId: "G-M2Z82JNLC9"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ─── State ───────────────────────────────────────────────
+        let currentStep = 0;
+        const totalSteps = 7;
+
+        // ─── Helpers ─────────────────────────────────────────────
+        const textVal = name => { const el = document.querySelector(`[name="${name}"]`); return el ? el.value.trim() : ''; };
+        const radioVal = name => !!document.querySelector(`[name="${name}"]:checked`);
+        const checkVal = name => !!document.querySelector(`[name="${name}"]:checked`);
+
+        // ─── Validation rules per step ───────────────────────────
+        function getStepErrors(step) {
+            const errors = [];
+            const t = (name, label) => { if (!textVal(name)) errors.push(label); };
+            const r = (name, label) => { if (!radioVal(name)) errors.push(label); };
+            const c = (name, label) => { if (!checkVal(name)) errors.push(label); };
+
+            switch (step) {
+                case 0:
+                    t('razao_social', 'Razão Social');
+                    t('cnpj', 'CNPJ');
+                    t('cidade', 'Cidade');
+                    t('estado', 'Estado');
+                    t('setor', 'Setor de Atuação');
+                    t('produto_principal', 'Principal Produto / Serviço');
+                    t('num_funcionarios', 'Número de Funcionários');
+                    r('associado_acia', 'É associado ACIA?');
+                    break;
+                case 1:
+                    r('experiencia_exportacao', 'Experiência com Exportação');
+                    r('perc_faturamento', 'Percentual do faturamento');
+                    r('forma_exportacao', 'Forma de exportação');
+                    break;
+                case 2:
+                    r('certificacoes', 'Certificações internacionais');
+                    r('capacidade_produtiva', 'Capacidade produtiva');
+                    break;
+                case 3:
+                    r('equipe_exportacao', 'Equipe responsável por exportação');
+                    r('material_idioma', 'Material em outro idioma');
+                    r('feiras', 'Participação em feiras / rodadas');
+                    r('grau_conhecimento', 'Grau de conhecimento em exportação');
+                    break;
+                case 4:
+                    r('importa', 'A empresa importa insumos ou produtos?');
+                    break;
+                case 5:
+                    c('dificuldades', 'Dificuldades para exportar (marque ao menos uma)');
+                    r('interesse_exportar', 'Interesse em exportar');
+                    c('apoio', 'Apoio desejado (marque ao menos uma opção)');
+                    break;
+                case 6:
+                    r('peiex', 'Situação com o PEIEX');
+                    break;
+            }
+            return errors;
+        }
+
+        // ─── Show toast ──────────────────────────────────────────
+        function showErrors(errors) {
+            let toast = document.getElementById('error-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'error-toast';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<strong>⚠ Preencha os campos obrigatórios:</strong><ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
+            toast.classList.add('visible');
+            clearTimeout(toast._hideTimer);
+            toast._hideTimer = setTimeout(() => toast.classList.remove('visible'), 5000);
+        }
+
+        // ─── Shake current section ───────────────────────────────
+        function shakeCurrent() {
+            const section = document.getElementById(`section-${currentStep}`);
+            section.classList.remove('shake');
+            void section.offsetWidth;
+            section.classList.add('shake');
+            setTimeout(() => section.classList.remove('shake'), 600);
+        }
+
+        // ─── UI update ───────────────────────────────────────────
+        function updateUI() {
+            document.querySelectorAll('.form-section').forEach((s, i) => {
+                s.classList.toggle('active', i === currentStep);
+            });
+
+            document.querySelectorAll('.step-btn').forEach((btn, i) => {
+                btn.classList.remove('active', 'done');
+                if (i === currentStep) btn.classList.add('active');
+                else if (i < currentStep) btn.classList.add('done');
+            });
+
+            document.querySelectorAll('.step-btn.done .step-circle').forEach(c => { c.textContent = '✓'; });
+            document.querySelectorAll('.step-btn:not(.done) .step-circle').forEach(c => {
+                c.textContent = parseInt(c.closest('.step-btn').dataset.step) + 1;
+            });
+
+            const pct = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = pct + '%';
+            document.getElementById('btn-prev').disabled = currentStep === 0;
+
+            const btn = document.getElementById('btn-next');
+            btn.textContent = currentStep === totalSteps - 1 ? '✔ Enviar Diagnóstico' : 'Próximo →';
+            document.getElementById('step-counter').textContent = `Etapa ${currentStep + 1} de ${totalSteps}`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ─── Navigation ──────────────────────────────────────────
+        function goToStep(index) {
+            if (index < 0 || index >= totalSteps) return;
+            if (index <= currentStep) {
+                currentStep = index;
+                updateUI();
+                return;
+            }
+            // Validate all steps up to the target
+            for (let s = currentStep; s < index; s++) {
+                const errors = getStepErrors(s);
+                if (errors.length) { showErrors(errors); shakeCurrent(); return; }
+                currentStep = s + 1;
+            }
+            updateUI();
+        }
+
+        function nextStep() {
+            if (currentStep === totalSteps - 1) { submitForm(); return; }
+            const errors = getStepErrors(currentStep);
+            if (errors.length) { showErrors(errors); shakeCurrent(); return; }
+            currentStep++;
+            updateUI();
+        }
+
+        function prevStep() {
+            if (currentStep > 0) { currentStep--; updateUI(); }
+        }
+
+        // ─── Submit to Firestore ─────────────────────────────────
+        function submitForm() {
+            const errors = getStepErrors(currentStep);
+            if (errors.length) { showErrors(errors); shakeCurrent(); return; }
+
+            const form = document.getElementById('main-form');
+            const data = new FormData(form);
+            const obj = { timestamp: firebase.firestore.FieldValue.serverTimestamp() };
+            data.forEach((v, k) => {
+                if (obj[k] !== undefined && k !== 'timestamp') {
+                    obj[k] = [].concat(obj[k], v);
+                } else {
+                    obj[k] = v;
+                }
+            });
+
+            const btn = document.getElementById('btn-next');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            db.collection('diagnosticos').add(obj)
+                .then(() => {
+                    document.getElementById('main-form').style.display = 'none';
+                    document.getElementById('nav-buttons').style.display = 'none';
+                    document.getElementById('success-screen').style.display = 'block';
+                    document.querySelector('.progress-wrap').style.display = 'none';
+                })
+                .catch(err => {
+                    console.error('Erro ao salvar:', err);
+                    btn.disabled = false;
+                    btn.textContent = '✔ Enviar Diagnóstico';
+                    showErrors(['Erro ao enviar. Verifique sua conexão e tente novamente.']);
+                });
+        }
+
+        // ─── Outros toggle ───────────────────────────────────────
+        function toggleOutros(checkbox) {
+            const wrap = document.getElementById('outros-wrap');
+            wrap.classList.toggle('visible', checkbox.checked);
+            if (!checkbox.checked) document.getElementById('dif-outros-text').value = '';
+        }
+
+        // ─── CNPJ mask ───────────────────────────────────────────
+        document.getElementById('cnpj').addEventListener('input', function (e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 14) v = v.slice(0, 14);
+            v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+            v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            v = v.replace(/(\d{4})(\d)/, '$1-$2');
+            e.target.value = v;
+        });
+
+        // Init
+        updateUI();
+    </script>
+</body>
+
+</html>
